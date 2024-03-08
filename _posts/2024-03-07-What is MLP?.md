@@ -49,7 +49,7 @@ At this point this setup seems so boring and meh. I said all that to tell how ML
 ## How does this MLP Look ?
 The image below is what MLP network looks like, but what the hell are these lines and nodes. What do
 they represent ?
-![mlp](/assets/images/mlp_image.jpg)
+![mlp]({{site.baseurl}}/assets/images/mlp_image.jpg)
 Let us list out the components which we see here:
 - Nodes
 - Edges

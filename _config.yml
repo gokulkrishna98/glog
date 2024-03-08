@@ -22,7 +22,7 @@ title: Gokul's Blog
 email: gokulkrishna98@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Experimentation and Recording my foolish discoveries.
-baseurl: "/blog/" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 url: https://goss.github.io/blog # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: gokul_sage
 github_username:  gokulkrishna98
