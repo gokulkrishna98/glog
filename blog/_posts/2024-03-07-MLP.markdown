@@ -1,0 +1,7 @@
+---
+layout: post
+title:  "What is MLP ?"
+date:   2024-03-07 19:35:37 -0500
+categories: jekyll update
+---
+Hi
