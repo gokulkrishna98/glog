@@ -60,6 +60,6 @@ First let us go through the structure and the check out the concepts.
 ### Nodes
 These are called neurons, similar to biological neuron, what do these neurons do.
 
-![mlp_neuron](/assets/images/mlp_neuron.jpg)
+![mlp_neuron]({{site.baseurl}}/assets/images/mlp_neuron.jpg)
 
 
