@@ -68,7 +68,166 @@ We can observe that neurons can be grouped based on their positional similarity 
 
 ![mlp_neuron]({{site.baseurl}}/assets/images/mlp_neuron.jpg)
 
-## Application of MLP
+## Why MLP is relevant ?
+MLP plays the role of universal function approximator, it is because the model can represent any continuous function given enough neurons. This makes it
+a powerful tool.
+
+## Using pytorch to implement MLP
+
+#### 1. Imports
+```
+import torch
+import torchvision
+import torchvision.transforms as transforms
+```
+
+#### 2. Defining Transforms and Loading the Dataset.
+Purpose of Transform:
+1. Convert the raw pixels to Tensors.
+2. Normalize the data from -1 to 1.
+
+```python
+transform = transforms.Compose(
+    [transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+)
+
+batch_size = 1
+
+trainset = torchvision.datasets.CIFAR10(root="./data", train=True, 
+			download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, 
+			batch_size=batch_size, shuffle=True, num_workers=2)
+
+testset = torchvision.datasets.CIFAR10(root="./data", train=False, 
+			download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, 
+			batch_size=batch_size, shuffle=False, num_workers=2)
+
+classes = ('plane', 'car', 'bird', 'cat',
+           'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+print(f"shape of images: {next(iter(trainloader))[0].shape}")
+print(f"shape of labels: {next(iter(trainloader))[1].shape}")
+```
+
+The torchvision data set gives pixel value from 0 to 1, but we create -1 to 1 (helps in utilizing relu and other advantages).
+The first tuple contains mean across each channel and the second tuple contains standard deviation across each channel.
+We then for each value normlize using this formula:
+
+$$ \hat{x} = \dfrac{x - mean}{std} $$
+
+Doing this on values with range [0, 1] using mean=0.5 and std=0.5, results in normalized value from [-1, 1]
+
+#### 3. Defining our MLP architecture
+We define our MLP. The input image has the shape (1, 3, 32, 32), i.e image with height=32px, width=32px and three channels (R,G,B).
+We assign each pixel to a neuron in the input layer, to do that we flatten the image to 1d tensor with shape (3072).
+Now we use nn.Linear to implement the input, hidden and output layer. Check out the documentation [here](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html). It is essentially dot-product plus adding bias. Then we add Relu activation.
+```python
+#defining mlp
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class MLP(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.flatten = nn.Flatten()
+        self.input_layer = nn.Linear(3*32*32, 256)
+        self.hidden_layer = nn.Linear(256, 128)
+        self.output_layer = nn.Linear(128, 10)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.flatten(x)
+        x = self.relu(self.input_layer(x))
+        x = self.relu(self.hidden_layer(x))
+        x = self.output_layer(x)
+        return x
+
+
+net = MLP()
+```
+
+#### 4. Define the loss and optimizer
+```python
+import torch.optim as optim
+
+crit = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+```
+
+You might have noticed that the output of MLP is a 1d tensor of 10 elements, but label we just have 1 label. There is no sync.
+If we attempt to solve the problem like linear regression there will be significant less learning. Instead we treate output of MLP
+as logits. The logit is a tensor, which gives probability of a given image belonging to particular label. The CrossEntropyLoss 
+helps in coverting labels to logits and we operate the loss based on applying softmax function, which gives probability. Read further
+about softmax.
+
+we use stochastic gradient descent to reach the local minima, that is update the parameters of the model through differentiation
+and reach best pair of values.
+
+#### 5. Training
+```python
+for epoch in range(5):
+    running_loss = 0.0
+    for i, data in enumerate(trainloader, 0):
+        inputs, labels = data
+        optimizer.zero_grad()
+
+        outputs = net(inputs)
+        # print(f"output shape{outputs.shape}")
+        loss = crit(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item()
+        if i % 2000 == 1999:
+            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+            running_loss = 0.0
+
+
+```
+Perfomring SGD. Calculate loss, then compute gradient using backward (read about Autograd 
+[here](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html)). Now update the params based on this gradient.
+Gradient descent formula (read about it).
+$$ \theta_{j+1} = \theta_j - \alpha \nabla J(\theta_j) $$
+
+#### 6. Evaluate the Dataset.
+```python
+correct = 0
+total = 0
+# since we're not training, we don't need to calculate the gradients for our outputs
+with torch.no_grad():
+    for data in testloader:
+        images, labels = data
+        # calculate outputs by running images through the network
+        outputs = net(images)
+        # the class with the highest energy is what we choose as prediction
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
+```
+
+Output
+```output
+Accuracy of the network on the 10000 test images: 51 %
+```
+
+#### 7. Save the Model
+```python
+PATH = './cifar_MLP.pth'
+torch.save(net.state_dict(), PATH)
+```
+
+## Conclusion
+We have seen what is MLP, why it is ubiquitos and powerful. We trained a MLP model using pytorch through SGD.
+This achieves 51 % accuracy on CIFAR-10 test dataset, which is pretty good for such a small and simple model.
+Well this approach many flaws, in the whole model we treat each pixel independently we do know infer any info
+of channels, neighbouring pixel relationship (we flatten) etc. But it still gives a competitive performance.
+In future we will see how CNN (new type of DNN which got popular in 2010s solves these issue). Next we will check
+more about pytorch ecosystem and see if we can make this model production ready.
 
 
 
