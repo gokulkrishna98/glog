@@ -42,12 +42,6 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
-      - name: config false
-        run: config set frozen false
-      - name: Update packages
-        run: bundle update
-      - name: config true
-        run: config set frozen false
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
