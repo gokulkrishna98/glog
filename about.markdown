@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-<img src="./assets/images/My_Photot.jpg" alt="drawing" width="200"/>
+<img src="./assets/images/My_Photot.jpg" width="200"/>
 
 Hi, I am Gokul, I am interested in Machine Learning, High performance computing and Compilers. Former Engineer at Samsung Research under CPU, GPU and Compiler Team for Neural Acceleration with 3 years of experience, currently pursuing masters in computer science @ NYU Courant.
 
