@@ -10,5 +10,5 @@ Hi, I am Gokul, I am interested in Machine Learning, High performance computing 
 
 I have experience in OpenCL GPU kernels, MLIR, Tensorflow and ArmNN and optimized lot of USP use cases for Flagship Galaxy Devices. My Passion currently lies in exploring the Neural Accelerators and Compilers.
 
-[My Resume](./assets/files/Gokul_Resume_09-8-2024.pdf)
+[My Resume](./assets/files/Gokul_Resume_09-14-2024.pdf)
 
