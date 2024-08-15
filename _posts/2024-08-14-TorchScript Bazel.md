@@ -62,7 +62,7 @@ http_archive(
 
 The URL and the SHA can be calculated from pytorch website: [here](https://pytorch.org/) . By Choosing `libtorch` package -> C++ -> Run this command (you will find link here and add it to `urls` in the `http_archive` for `libtorch`). For `sha256`, calculate it using `sha256` checksum tool.
 
-![pytorch install](../assets/images/pytorch_myscript.png)
+![pytorch install]({{site.baseurl}}/assets/images/pytorch_myscript.png)
 
 Next, we have to write bazel rules to read the torch script, shared objects, header files to add it as dependency. Create a folder called `third_party/torchscript` and create the following files:
 - empty `BUILD`.
