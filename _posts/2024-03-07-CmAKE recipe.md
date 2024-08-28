@@ -10,7 +10,7 @@ with set of rules and giving us the power to configure the build. Let us see how
 I followed the official tutorial, please look at it. This just my notes and peasant level understanding.
 
 ## Prerequisites
-Have CMake Installed, C++/C basics. check using `cmake --version`, `gcc --verion`.
+Have CMake Installed, C++/C basics. check using `cmake --version`, `gcc --version`.
 
 ## Compiling Single File
 In this project we have two files tutorial.cpp and tutorial.h, indicating the source file and header file for the source file. What do we want to accompilish here:
