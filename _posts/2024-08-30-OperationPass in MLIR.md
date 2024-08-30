@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "In-lining in MLIR"
+title:  "Operatio Pass in MLIR"
 date:   2024-08-30 11:57:37 -0500
 categories: jekyll update
 ---
