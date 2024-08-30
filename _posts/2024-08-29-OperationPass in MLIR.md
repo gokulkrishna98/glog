@@ -46,25 +46,18 @@ We do this by creating a pass by inheriting `mlir::PassWrapper`, it has a virtua
 ```
 struct ShapeInferencePass : public mlir::PassWrapper<ShapeInferencePass, OperationPass<mlir::gglow::FuncOp>> {
 ...
-
     void runOnOperation() override {
         auto f = getOperation();
 
-        llvm::SmallPtrSet<mlir::Operation*, 16> opWorklist;
+        llvm::SmallVector<mlir::Operation*, 16> opWorklist;
         f.walk([&](mlir::Operation* op) {
             if(returnsDynamicShape(op)){
-                opWorklist.insert(op);
+                opWorklist.push_back(op);
             }
         });
 
-        while(!opWorklist.empty()) {
-            auto nextop = llvm::find_if(opWorklist, allOperandsInferred);
-            if(nextop == opWorklist.end())
-                break;
-            
-            Operation *op = *nextop;
-            opWorklist.erase(op);
-
+        for(size_t i =0; i<opWorklist.size(); i++) {
+            Operation *op = opWorklist[i];
             if (auto shapeOp = dyn_cast<ShapeInference>(op)){
                 shapeOp.inferShapes();
             } else {
@@ -74,12 +67,7 @@ struct ShapeInferencePass : public mlir::PassWrapper<ShapeInferencePass, Operati
             }
         }
 
-        if (!opWorklist.empty()) {
-            f.emitError("Shape inference failed, ")
-                << opWorklist.size() << " operations couldn't be inferred\n";
-            signalPassFailure();
-        }
-
+        opWorklist.clear();
         return;
     }
 ...
